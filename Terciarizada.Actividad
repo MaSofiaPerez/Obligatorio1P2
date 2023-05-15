@@ -1,0 +1,48 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Text;
+using System.Threading.Tasks;
+namespace ObligatorioAppConsole
+{
+public class Terciarizada: Actividad
+{
+#region Atributos
+Proveedor proveedor;
+bool confirmada;
+DateTime fechaConfirmacion;
+#endregion
+#region Propiedades
+public Proveedor Proveedor { get => proveedor; }
+public bool Confirmada { get => confirmada;}
+public DateTime FechaConfirmacion { get => fechaConfirmacion;}
+#endregion
+#region Constructor
+public Terciarizada(Proveedor proveedor, bool confirmada, DateTime fechaConfirmacion, string nombre, string descripcion, DateTime fechaRealizacion, int cantMaxPersonas, int edadMinima, double costo) : base(nombre, descripcion, fechaRealizacion, cantMaxPersonas, edadMinima, costo)
+{
+this.proveedor = proveedor;
+this.confirmada = confirmada;
+this.fechaConfirmacion = fechaConfirmacion;
+}
+#endregion
+#region Métodos
+public override void ValidarDatos()
+{
+base.ValidarDatos();
+if (this.fechaConfirmacion > this.FechaRealizacion) throw new Exception("Error en la consistencia de datos. La fecha de realizacion debe ser posterior a la de confirmación de la actividad.");
+if (this.confirmada == false && this.fechaConfirmacion != new DateTime()) throw new Exception("No puede tener una fecha de confirmación asignada si aún no fue confirmada la actividad por el proveedor");
+if (this.confirmada == true && this.fechaConfirmacion == new DateTime()) throw new Exception("Fecha de confirmación no puede estar vacía si la actividad ya fue confirmada por un proveedor");
+}
+/// <summary>
+/// Funcion que retorna el costo final de la actividad
+/// </summary>
+/// <returns></returns>
+public double ObtenerCostoActividad()
+{
+if (proveedor.Descuento == 0) return this.Costo;
+return this.Costo - this.Costo * (proveedor.Descuento / 10);
+}
+#endregion
+}
+}
