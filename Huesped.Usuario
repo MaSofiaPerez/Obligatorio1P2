@@ -1,0 +1,101 @@
+using Library;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+namespace ObligatorioAppConsole
+{
+public class Huesped: Usuario
+{
+#region Atributos
+TipoDoc tipoDoc;
+string nroDoc;
+string nombre;
+string apellido;
+string habitacion;
+DateTime fechaNac;
+NivelFidelizacion nivelFidelizacion;
+#endregion
+#region Propiedades
+public TipoDoc TipoDoc { get => tipoDoc; }
+public string NroDoc { get => nroDoc; }
+/*public string Nombre { get => nombre; }
+public string Apellido { get => apellido;}
+public string Habitacion { get => habitacion;}*/
+public DateTime FechaNac { get => fechaNac;}
+public NivelFidelizacion NivelFidelizacion { get => nivelFidelizacion;}
+#endregion
+#region Constructor
+public Huesped (TipoDoc tipoDoc, string nroDoc, string nombre, string apellido, string habitacion, DateTime fechaNac, NivelFidelizacion nivelFidelizacion, string mail, string contrasenia) : base(mail, contrasenia)
+{
+this.tipoDoc = tipoDoc;
+this.nroDoc = nroDoc;
+this.nombre = nombre;
+this.apellido = apellido;
+this.habitacion = habitacion;
+this.fechaNac = fechaNac;
+this.nivelFidelizacion = nivelFidelizacion;
+}
+#endregion
+#region Métodos
+/// <summary>
+/// Valido datos IValidable
+/// </summary>
+/// <exception cref="Exception"></exception>
+public override void ValidarDatos()
+{
+base.ValidarDatos();
+if (String.IsNullOrEmpty(nombre) || String.IsNullOrEmpty(apellido) || String.IsNullOrEmpty(habitacion))
+throw new Exception("Datos ingresados no pueden ser nulos ni vacíos");
+if (tipoDoc == TipoDoc.CI && !EsCIValida(this.nroDoc)) throw new Exception("La CI ingresada no es válida");
+}
+/// <summary>
+/// Verifica que el numero de documento CI sea valido
+/// </summary>
+/// <param name="nroDoc"></param>
+/// <returns></returns>
+private bool EsCIValida(string nroDoc)
+{
+if (String.IsNullOrEmpty(nroDoc) || nroDoc.Length != 8 || !int.TryParse(nroDoc, out int ciNum)) return false;
+int[] numXValidacion = { 2, 9, 8, 7, 6, 3, 4 };
+int suma = 0;
+for (int i = 0; i < numXValidacion.Length; i++)
+{
+suma += numXValidacion[i] * int.Parse(nroDoc[i].ToString());
+}
+int digitoVerificador = 10 - (suma % 10);
+if(digitoVerificador == 10)
+{
+digitoVerificador = 0;
+}
+return digitoVerificador == int.Parse(nroDoc[7].ToString());
+}
+/// <summary>
+/// Retorna el atributo tipoDocumento
+/// </summary>
+/// <returns></returns>
+public TipoDoc ObtenerTipoDoc()
+{
+return tipoDoc;
+}
+/// <summary>
+/// Retorna el atributo numero de documento
+/// </summary>
+/// <returns></returns>
+public string ObtenerNroDoc()
+{
+return nroDoc;
+}
+/// <summary>
+/// Retorna atributo Nivel Fidelizacion
+/// </summary>
+/// <returns></returns>
+public NivelFidelizacion ObtenerNivelFidelizacion()
+{
+return nivelFidelizacion;
+}
+#endregion
+}
+}
