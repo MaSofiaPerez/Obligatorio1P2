@@ -1,0 +1,310 @@
+using Library;
+using ObligatorioAppConsole;
+namespace ConsoleApp1
+{
+internal class Program
+{
+#region Metodos para poder implementar opciones del menu
+static void Main(string[] args)
+{
+Sistema Hotel = Sistema.Instancia;
+string opcion = "";
+do
+{
+try
+{
+ImprimirMenuPrincipal();
+IngresarValor("Ingrese una opción ", out opcion);
+switch (opcion)
+{
+case "1":
+ListarActividades();
+break;
+case "2":
+ListarProveedores();
+break;
+case "3":
+ListarActividadesXCostoEntreFechas();
+break;
+case "4":
+EstablecerValorDePromocionActividad();
+break;
+case "5":
+AltaHuesped();
+break;
+case "X":
+case "x":
+break;
+default:
+Console.ForegroundColor = ConsoleColor.Cyan;
+Console.WriteLine("Opción inválida.");
+Console.ReadLine();
+break;
+}
+}
+catch (Exception ex)
+{
+Console.ForegroundColor = ConsoleColor.Blue;
+Console.WriteLine(ex.Message);
+Console.ReadLine();
+}
+} while (opcion != "X" && opcion != "x");
+}
+/// <summary>
+/// Menu en consola
+/// </summary>
+private static void ImprimirMenuPrincipal()
+{
+Console.Clear();
+Console.ForegroundColor = ConsoleColor.Yellow;
+Console.WriteLine("**** Obligatorio ****");
+Console.WriteLine("");
+Console.ForegroundColor = ConsoleColor.Gray;
+Console.WriteLine("1.Listar Actividades.");
+Console.WriteLine("2.Listar Proveedores.");
+Console.WriteLine("3.Listar Actividades X costo entre fechas.");
+Console.WriteLine("4.Establecer valor de promoción de Actividad. ");
+Console.WriteLine("5.Alta de Huespedes.");
+Console.WriteLine("X.Para salir.");
+Console.WriteLine("");
+}
+/// <summary>
+/// Convierte y verifica valor string ingresado
+/// </summary>
+/// <param name="mensaje"></param>
+/// <param name="valor"></param>
+private static void IngresarValor(string mensaje, out string valor)
+{
+bool textoValido = false;
+do
+{
+Console.ForegroundColor = ConsoleColor.Yellow;
+Console.Write(mensaje);
+Console.ForegroundColor= ConsoleColor.Gray;
+string textoIngresado = Console.ReadLine()!;
+if (string.IsNullOrEmpty(textoIngresado))
+{
+Console.ForegroundColor = ConsoleColor.Cyan;
+Console.WriteLine("El valor ingresado no es correcto, intente nuevamente");
+}
+else
+{
+textoValido = true;
+}
+valor = textoIngresado!;
+} while (!textoValido);
+}
+/// <summary>
+/// Convierte y verifica valor TipoDoc ingresado
+/// </summary>
+/// <param name="mensaje"></param>
+/// <param name="valor"></param>
+private static void IngresarValorTipoDoc(string mensaje, out TipoDoc valor)
+{
+bool textoValido = false;
+do
+{
+Console.ForegroundColor = ConsoleColor.Yellow;
+Console.Write(mensaje);
+Console.ForegroundColor = ConsoleColor.Gray;
+string? textoIngresado = Console.ReadLine();
+if (string.IsNullOrEmpty(textoIngresado))
+{
+Console.ForegroundColor = ConsoleColor.Cyan;
+Console.WriteLine("El valor ingresado no es correcto, intente nuevamente");
+}
+if (Enum.TryParse(textoIngresado, out valor) && (valor == TipoDoc.OTROS || valor == TipoDoc.CI || valor == TipoDoc.PASAPORTE))
+{
+textoValido = true;
+}
+else
+{
+Console.ForegroundColor = ConsoleColor.Cyan;
+Console.WriteLine("El valor ingresado no es correcto, intente nuevamente");
+}
+} while (!textoValido);
+}
+/// <summary>
+/// Convierte y verifica NivelFidelizacion ingresado
+/// </summary>
+/// <param name="mensaje"></param>
+/// <param name="valor"></param>
+private static void IngresarValorNivelFidelizacion(string mensaje, out NivelFidelizacion valor)
+{
+bool textoValido = false;
+do
+{
+Console.ForegroundColor = ConsoleColor.Yellow;
+Console.Write(mensaje);
+Console.ForegroundColor = ConsoleColor.Gray;
+string? textoIngresado = Console.ReadLine();
+if (string.IsNullOrEmpty(textoIngresado))
+{
+Console.ForegroundColor = ConsoleColor.Cyan;
+Console.WriteLine("El valor ingresado no es correcto, intente nuevamente");
+}
+if (Enum.TryParse(textoIngresado, out valor) && (valor == NivelFidelizacion.Nivel1 || valor == NivelFidelizacion.Nivel2 || valor == NivelFidelizacion.Nivel3 || valor == NivelFidelizacion.Nivel4))
+{
+textoValido = true;
+}
+else
+{
+Console.ForegroundColor = ConsoleColor.Cyan;
+Console.WriteLine("El valor ingresado no es correcto, intente nuevamente");
+}
+} while (!textoValido);
+}
+/// <summary>
+/// Convierte y verifica fecha ingresada
+/// </summary>
+/// <param name="mensaje"></param>
+/// <param name="valor"></param>
+private static void IngresarFecha(string mensaje, out DateTime valor)
+{
+bool textoValido = false;
+do
+{
+Console.ForegroundColor = ConsoleColor.Yellow;
+Console.Write(mensaje);
+Console.ForegroundColor = ConsoleColor.Gray;
+string? textoIngresado = Console.ReadLine();
+if (string.IsNullOrEmpty(textoIngresado))
+{
+Console.ForegroundColor = ConsoleColor.Cyan;
+Console.WriteLine("El valor ingresado no puede ser nulo o vacío, intente nuevamente");
+}
+if (DateTime.TryParse(textoIngresado, out valor))
+{
+textoValido = true;
+}
+else
+{
+Console.ForegroundColor = ConsoleColor.Cyan;
+Console.WriteLine("No se pudo convertir el dato ingresado al formato fecha, intente nuevamente");
+}
+} while (!textoValido);
+}
+/// <summary>
+/// Converte y verifica valor numerico de tipo double ingresado
+/// </summary>
+/// <param name="mensaje"></param>
+/// <param name="valor"></param>
+private static void IngresarValorNumericodouble(string mensaje, out double valor)
+{
+bool textoValido = false;
+do
+{
+Console.ForegroundColor = ConsoleColor.Yellow;
+Console.Write(mensaje);
+Console.ForegroundColor = ConsoleColor.Gray;
+string? textoIngresado = Console.ReadLine();
+if (string.IsNullOrEmpty(textoIngresado))
+{
+Console.ForegroundColor = ConsoleColor.Cyan;
+Console.WriteLine("El valor ingresado no puede ser nulo o vacío, intente nuevamente");
+}
+if (double.TryParse(textoIngresado, out valor))
+{
+textoValido = true;
+}
+else
+{
+Console.ForegroundColor = ConsoleColor.Cyan;
+Console.WriteLine("El valor ingresado no es un número, intente nuevamente");
+}
+} while (!textoValido);
+}
+/// <summary>
+/// Da mensaje al usuario una vez realizada la acción elegida
+/// </summary>
+private static void PausaYRefresar()
+{
+Console.ForegroundColor = ConsoleColor.DarkCyan;
+Console.WriteLine("Operación ejecutada, presione una tecla para continuar.");
+Console.ReadLine();
+}
+#endregion
+#region Metodos del menu
+/// <summary>
+/// Imprime datos de actividades
+/// </summary>
+static void ListarActividades()
+{
+Sistema Hotel = Sistema.Instancia;
+List<string> datosActividades = Hotel.ObtenerDatosActividades();
+foreach (string dato in datosActividades)
+{
+Console.WriteLine($"{dato}");
+}
+Console.ReadLine();
+PausaYRefresar();
+}
+/// <summary>
+/// Imprime datos de proveedores ordenados por nombre alfabeticamente
+/// </summary>
+static void ListarProveedores()
+{
+Sistema Hotel = Sistema.Instancia;
+List<string> datosProveedores = Hotel.ObtenerDatosProveedores();
+datosProveedores.Sort();
+foreach (string dato in datosProveedores)
+{
+Console.WriteLine($"{dato}");
+}
+Console.ReadLine();
+PausaYRefresar();
+}
+/// <summary>
+/// Lista las actividades mayores al costo dado entre fechas dadas ordenadas de forma descendente por costo
+/// </summary>
+static void ListarActividadesXCostoEntreFechas()
+{
+IngresarValorNumericodouble("Ingrese el costo: ", out double costo);
+IngresarFecha("Ingrese primera fecha: ", out DateTime fecha1);
+IngresarFecha("Ingrese segunda fecha: ", out DateTime fecha2);
+if (fecha1 > fecha2)
+{
+Console.ForegroundColor = ConsoleColor.Cyan;
+Console.WriteLine("La primer fecha ingresada debe ser anterior a la segunda");
+}
+Sistema Hotel = Sistema.Instancia;
+List<string> actividadesFiltradas = Hotel.ObtenerActividadesXCostoEntreFechas(costo, fecha1, fecha2);
+foreach (string dato in actividadesFiltradas)
+{
+Console.WriteLine($"{dato}");
+}
+Console.ReadLine();
+PausaYRefresar();
+}
+/// <summary>
+/// Establece un nuevo valor de promocion de proveedro
+/// </summary>
+static void EstablecerValorDePromocionActividad()
+{
+IngresarValor("Ingrese el nombre del Proveedor: ", out string nombre);
+IngresarValorNumericodouble("Ingrese valor de promocion: ", out double valorPromo);
+Sistema Hotel = Sistema.Instancia;
+Hotel.EstablecerDescuentoProveedor(nombre, valorPromo);
+PausaYRefresar();
+}
+/// <summary>
+/// Se piden los datos para dar de alta a un huesped.
+/// </summary>
+static void AltaHuesped()
+{
+IngresarValorTipoDoc("Ingrese el tipo de documento (1) CI, (2) PASAPORTE, (3) OTROS: ", out TipoDoc tipoDoc);
+IngresarValor("Ingrese el documento de identidad: ", out string nroDoc);
+IngresarValor("Ingrese el nombre: ", out string nombre);
+IngresarValor("Ingrese el apellido: ", out string apellido);
+IngresarValor("Ingrese la habitacion correspondiente: ", out string habitacion);
+IngresarFecha("Ingrese la fecha de nacimiento (AAAA-MM-DD): ", out DateTime fechaNac);
+IngresarValorNivelFidelizacion("Ingrese nivel de fidelizacion (1,2,3 o 4): ", out NivelFidelizacion nivelFidelizacion);
+IngresarValor("Ingrese el mail: ", out string mail);
+IngresarValor("Ingrese la contraseña: ", out string contrasenia);
+Sistema Hotel = Sistema.Instancia;
+Hotel.AltaUsuario(new Huesped(tipoDoc, nroDoc, nombre, apellido, habitacion, fechaNac, nivelFidelizacion, mail, contrasenia));
+PausaYRefresar();
+}
+}
+#endregion
+}
