@@ -1,0 +1,68 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+namespace ObligatorioAppConsole
+{
+public class Proveedor: IValidable, IComparable<Proveedor>
+{
+#region Atributos
+string nombre;
+string telefono;
+string direccion;
+private double descuento;
+#endregion
+#region Propiedades
+public string Nombre { get => nombre; }
+/*public string Telefono { get => telefono;}
+public string Direccion { get => direccion; }*/
+public double Descuento { get => descuento; /*set { descuento = value; }*/ }
+#endregion
+#region Constructor
+public Proveedor(string nombre, string telefono, string direccion, double descuento)
+{
+this.nombre = nombre;
+this.telefono = telefono;
+this.direccion = direccion;
+this.descuento = descuento;
+}
+#endregion
+#region Metodos
+/// <summary>
+/// Valida datos - IValidable
+/// </summary>
+/// <exception cref="Exception"></exception>
+public virtual void ValidarDatos()
+{
+if (String.IsNullOrEmpty(nombre) || String.IsNullOrEmpty(telefono) || String.IsNullOrEmpty(direccion))
+throw new Exception("Datos no pueden ser nulos ni vacíos");
+}
+/// <summary>
+/// Compara para obtener la lista por nombre en orden alfabetico
+/// </summary>
+/// <param name="other"></param>
+/// <returns></returns>
+public int CompareTo(Proveedor? other)
+{
+return this.nombre.CompareTo(other.nombre);
+}
+/// <summary>
+/// Sobreescribe el metodo ToString() para devolver los atributos
+/// </summary>
+/// <returns></returns>
+public override string ToString()
+{
+return $"\nNombre: {nombre}\nTel: {telefono}\nDirección: {direccion}\nDescuento Fijo: {descuento}\n";
+}
+/// <summary>
+/// Establece un nuevo descuento al atributo descuento
+/// </summary>
+/// <param name="nuevoDescuento"></param>
+public void CambiarDescuento(double nuevoDescuento)
+{
+descuento = nuevoDescuento;
+}
+#endregion
+}
+}
