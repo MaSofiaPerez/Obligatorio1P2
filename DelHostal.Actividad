@@ -1,0 +1,65 @@
+using Library;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+namespace ObligatorioAppConsole
+{
+public class DelHostal: Actividad
+{
+#region Atributos
+string responsable;
+string lugar;
+bool aireLibre;
+#endregion
+#region Propiedades
+/* public string Responsable { get => responsable; }
+public string Lugar { get => lugar;}
+public bool AireLibre { get => aireLibre;}*/
+#endregion
+#region Constructor
+public DelHostal (string responsable, string lugar, bool aireLibre, string nombre, string descripcion, DateTime fechaRealizacion, int cantMaxPersonas, int edadMinima, double costo) : base(nombre, descripcion, fechaRealizacion, edadMinima, cantMaxPersonas, costo)
+{
+this.responsable = responsable;
+this.lugar = lugar;
+this.aireLibre = aireLibre;
+}
+#endregion
+#region Métodos
+public override void ValidarDatos()
+{
+base.ValidarDatos();
+if(String.IsNullOrEmpty(responsable)) throw new Exception("Responsable no puede ser nulo o vacío");
+}
+/// <summary>
+/// Funcion que retorna el valor final del costo de la actividad
+/// </summary>
+/// <param name="nivelFidelizacion"></param>
+/// <returns></returns>
+/// <exception cref="Exception"></exception>
+public double CalcularCostoConDescuento(NivelFidelizacion nivelFidelizacion)
+{
+double retorno = 0;
+switch (nivelFidelizacion)
+{
+case NivelFidelizacion.Nivel1:
+retorno = this.Costo;
+break;
+case NivelFidelizacion.Nivel2:
+retorno = this.Costo * 0.90;
+break;
+case NivelFidelizacion.Nivel3:
+retorno = this.Costo * 0.85;
+break;
+case NivelFidelizacion.Nivel4:
+retorno = this.Costo * 0.80;
+break;
+default:
+throw new Exception("El nivel de fidelización ingresado no es correcto");
+}
+return retorno;
+}
+#endregion
+}
+}
