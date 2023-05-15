@@ -1,0 +1,40 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Text;
+using System.Threading.Tasks;
+namespace ObligatorioAppConsole
+{
+public abstract class Usuario: IValidable
+{
+#region Atributos
+string mail;
+string contrasenia;
+#endregion
+#region Propiedades
+/*public string Mail { get => mail; }
+public string Contrasenia { get => contrasenia; }*/
+#endregion
+#region Constructor
+public Usuario(string mail, string contrasenia)
+{
+this.mail = mail;
+this.contrasenia = contrasenia;
+}
+#endregion
+#region Métodos
+/// <summary>
+/// Valida datos : IValidable
+/// </summary>
+/// <exception cref="Exception"></exception>
+public virtual void ValidarDatos()
+{
+int ultimoCaracter = mail.Length -1;
+if (String.IsNullOrEmpty(mail) || String.IsNullOrEmpty(contrasenia)) throw new Exception("Datos no pueden ser nulos o vacíos");
+if (this.contrasenia.Length < 8) throw new Exception("Constraseña debe tener como mínimo 8 caracteres");
+if (this.mail[0] == '@' || this.mail[ultimoCaracter] == '@') throw new Exception("El @ no puede estar al inicio ni al final del mail");
+}
+#endregion
+}
+}
