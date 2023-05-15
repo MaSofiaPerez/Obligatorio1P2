@@ -1,0 +1,20 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+namespace ObligatorioAppConsole
+{
+public class Operador: Usuario
+{
+#region Constructor
+public Operador (string mail, string contrasenia) : base(mail, contrasenia)
+{ }
+#endregion
+#region Métodos
+private void ConfirmarPago()
+{
+}
+#endregion
+}
+}
