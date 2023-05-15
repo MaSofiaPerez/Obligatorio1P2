@@ -1,0 +1,281 @@
+using ObligatorioAppConsole;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
+using System.Text;
+using System.Threading.Tasks;
+namespace Library
+{
+public class Sistema
+{
+#region Listas + Singleton
+List<Actividad> actividades;
+List<Usuario> usuarios;
+List<Proveedor> proveedores;
+List<Agenda> agendas;
+private static Sistema? instancia;
+/// <summary>
+/// Creo la lista de huespedes a través de la lista de usuarios
+/// </summary>
+private List<Huesped> Huespedes
+{
+get => this.usuarios.FindAll(x => x is Huesped).Cast<Huesped>().ToList();
+}
+public static Sistema Instancia
+{
+get
+{
+if (instancia == null)
+{
+instancia = new Sistema();
+}
+return instancia;
+}
+}
+private Sistema()
+{
+agendas = new List<Agenda>();
+actividades = new List<Actividad>();
+usuarios = new List<Usuario>();
+proveedores = new List<Proveedor>();
+PrecargaProveedores();
+PrecargaActividades();
+PrecargaUsuarios();
+}
+#endregion
+#region Precarga de datos
+private void PrecargaProveedores()
+{
+AltaProveedor(new Proveedor("DreamWorks S.R.L.", "23048549", "Suarez 3380 Apto 304", 10));
+AltaProveedor(new Proveedor("Estela Umpierrez S.A.", "33459678", "Lima 2456", 7));
+AltaProveedor(new Proveedor("TravelFun", "29152020", "Misiones 1140", 9));
+AltaProveedor(new Proveedor("Rekreation S.A.", "29162019", "Bacacay 1211", 11));
+AltaProveedor(new Proveedor("Alonso & Umpierrez", "24051920", "18 de Julio 1956 Apto 4", 10));
+AltaProveedor(new Proveedor("Electric Blue", "26018945", "Cooper 678", 5));
+AltaProveedor(new Proveedor("Lúdica S.A.", "26142967", "Dublin 560", 4));
+AltaProveedor(new Proveedor("Gimenez S.R.L.", "29001010", "Andes 1190", 7));
+AltaProveedor(new Proveedor("Mendez S.R.L", "22041120", "Agraciada 2512 Apto. 1", 8));
+AltaProveedor(new Proveedor("Norberto Molina", "22001189", "Paraguay 2100", 9));
+}
+private void PrecargaActividades()
+{
+#region ActividadesDelHostal
+AltaActividad(new DelHostal("Maria", "Sala de Estar", false, "Poker", "Juego de cartas", new DateTime(2023, 05, 06), 10, 18, 5));
+AltaActividad(new DelHostal("Juan", "Cancha Tenis", true, "Tenis", "Deporte", new DateTime(2023, 05, 10), 4, 12, 20));
+AltaActividad(new DelHostal("Marta", "Cancha futbol 5", true, "FutVolley", "Deporte", new DateTime(2023, 05, 17), 4, 10, 10));
+AltaActividad(new DelHostal("Romina", "Gimnasio 1", false, "Clase de Baile", "Sesión en la que se enseñarán técnicas y movimientos característicos del ritmo elegido", new DateTime(2023, 06, 01), 15, 12, 20));
+AltaActividad(new DelHostal("Sebastian", "Sala de Estar", false, "Lectura de Tarot", "Nuestros profesionales le adivinarán el futuro con una tirada de cartas del tarot", new DateTime(2023, 06, 11), 5, 18, 30));
+AltaActividad(new DelHostal("Mariana", "Sala de Estar", false, "Lectura para niños", "Actividad de lectura de libros para niños en voz alta", new DateTime(2023, 06, 21), 12, 1, 15));
+AltaActividad(new DelHostal("Romina", "Jardin 1", true, "Busqueda del tesoro", "Juego en equipo que consiste en encontrar un tesoro bajo las indicaciones y pistas que el moderador les otorgue", new DateTime(2023, 07, 10), 20, 5, 80));
+AltaActividad(new DelHostal("Nicolas", "Jardin 2", true, "Yoga", "Prácticas de posturas, meditación y respiración consciente", new DateTime(2023, 07, 22), 10, 15, 40));
+AltaActividad(new DelHostal("Gonzalo", "Cocina", false, "Clase de sushi", "Sesión en donde se enseñarán y practicarán las técnicas y habilidades que se requieren para la preparación de diferentes tipos de sushi", new DateTime(2023, 08, 10), 8, 12, 110));
+AltaActividad(new DelHostal("Soledad", "Bodega", false, "Degustación de vinos", "Podrá degustar cinco diferentes tipos de vino realizados en nuestra bodega.", new DateTime(2023, 08, 04), 10, 18, 150));
+#endregion
+#region ActividadesTerciarizadas
+AltaActividad(new Terciarizada(proveedores[0], true, new DateTime(2023, 05, 24), "Tirolesa", "Vive la experiencia de viajar colgando de un cable por entre la selva.", new DateTime(2023, 05, 28), 5, 12, 80));
+AltaActividad(new Terciarizada(proveedores[0], true, new DateTime(2023, 05, 24), "Buceo", "Actividad acuática que explora el mundo submarino", new DateTime(2023, 05, 28), 10, 15, 120));
+AltaActividad(new Terciarizada(proveedores[0], false, new DateTime(), "Senderismo", "Descubre mediante caminatas guiadas los paisajes autóctonos del lugar", new DateTime(2023, 05, 28), 20, 12, 70));
+AltaActividad(new Terciarizada(proveedores[1], true, new DateTime(2023, 06, 12), "CityTour", "Paseo guiado por el centro de la ciudad", new DateTime(2023, 06, 15), 20, 5, 30));
+AltaActividad(new Terciarizada(proveedores[1], true, new DateTime(2023, 06, 12), "PubTour", "Descubre los mejores pubs nocturnos de la ciudad. Incluye una consumición en cada lugar", new DateTime(2023, 06, 15), 15, 18, 130));
+AltaActividad(new Terciarizada(proveedores[1], true, new DateTime(2023, 06, 28), "Dia de museos", "Recorre con tu guía los tres mejores museos de la ciudad.", new DateTime(2023, 07, 04), 12, 12, 30));
+AltaActividad(new Terciarizada(proveedores[3], false, new DateTime(), "Escalada", "Experimenta la adrenalina de conocer los picos más tradicionales. No se necesita experiencia previa en escalada.", new DateTime(2023, 05, 28), 8, 15, 115));
+AltaActividad(new Terciarizada(proveedores[3], false, new DateTime(), "Mercado Comidas", "Recorremos el mayor mercado lugareño para conocer las comidas típicas del país.", new DateTime(2023, 05, 28), 5, 12, 80));
+AltaActividad(new Terciarizada(proveedores[3], true, new DateTime(2023, 07, 03), "Recorrido artesanal", "Recorreremos la feria artesanal, los lugareños nos enseñarán las técnicas utilizadas en sus productos.", new DateTime(2023, 07, 10), 20, 5, 50));
+AltaActividad(new Terciarizada(proveedores[5], true, new DateTime(2023, 07, 03), "Paseo en avioneta", "Descubre el territorio desde una nueva perspectiva", new DateTime(2023, 07, 10), 2, 15, 280));
+AltaActividad(new Terciarizada(proveedores[5], true, new DateTime(2023, 06, 28), "Dia en Isla", "Ida en bote hasta la isla más reconocida del lugar con almuerzo incluído", new DateTime(2023, 07, 04), 10, 10, 200));
+AltaActividad(new Terciarizada(proveedores[5], false, new DateTime(), "Tour nocturno en bici", "Recorrida noctura por costanera antigua hacia el faro en bicicleta.", new DateTime(2023, 05, 28), 20, 10, 20));
+AltaActividad(new Terciarizada(proveedores[8], true, new DateTime(2023, 08, 20), "Mirador de aves", "Ida al mirador donde podrás observar las diferentes especies de aves autóctonas", new DateTime(2023, 08, 22), 10, 5, 25));
+AltaActividad(new Terciarizada(proveedores[8], false, new DateTime(), "Atardecer en viejo fortin", "Descubriremos el fortín más antiguo de la ciudad en donde degustaremos una rica merienda acompañados de la mejor puesta del sol.", new DateTime(2023, 05, 28), 15, 0, 70));
+AltaActividad(new Terciarizada(proveedores[8], true, new DateTime(2023, 08, 20), "Parque de diversiones", "Disfruta en familia los juegos más divertidos y vertiginosos", new DateTime(2023, 08, 22), 10, 5, 125));
+#endregion
+}
+private void PrecargaUsuarios()
+{
+AltaUsuario(new Huesped(TipoDoc.CI, "50904747", "Maria", "Perez", "123", new DateTime(2000, 05, 20), NivelFidelizacion.Nivel3, "mariaperez@gmail.com", "12345678"));
+}
+#endregion
+#region Altas de datos y validaciones
+/// <summary>
+/// La funcion da de alta la actividad validando el ingreso de datos
+/// </summary>
+/// <param name="actividad"></param>
+/// <exception cref="Exception"></exception>
+public void AltaActividad(Actividad actividad)
+{
+if (actividad == null) throw new Exception("La actividad a crear no puede ser nula");
+actividad.ValidarDatos();
+actividades.Add(actividad);
+}
+/// <summary>
+/// La funcion da de alta un usuario validando el ingreso de datos
+/// </summary>
+/// <param name="usuario"></param>
+/// <exception cref="Exception"></exception>
+public void AltaUsuario(Usuario usuario)
+{
+if (usuario == null) throw new Exception("El usuario ingresado no puede ser nulo");
+if (usuario is Huesped nuevoHuesped)
+{
+ExisteHuesped(nuevoHuesped);
+}
+usuario.ValidarDatos();
+usuarios.Add(usuario);
+}
+/// <summary>
+/// La funcion da de alta un proveedor validando el ingreso de datos
+/// </summary>
+/// <param name="proveedor"></param>
+/// <exception cref="Exception"></exception>
+public void AltaProveedor(Proveedor proveedor)
+{
+proveedor.ValidarDatos();
+if (proveedor == null) throw new Exception("Proveedor no puede ser nulo");
+if (ExisteProveedor(proveedor.Nombre)) throw new Exception("El nombre ya existe");
+proveedores.Add(proveedor);
+}
+/// <summary>
+/// La funcion da de alta una agenda validando el ingreso de datos
+/// </summary>
+/// <param name="agenda"></param>
+/// <exception cref="Exception"></exception>
+public void AltaAgenda(Agenda agenda)
+{
+if (agenda.Huesped == null || agenda.Actividad == null) throw new Exception("Huesped y Actividad no pueden ser nulos");
+agenda.Huesped.ValidarDatos();
+agenda.Actividad.ValidarDatos();
+agenda.ValidarDatos();
+agendas.Add(agenda);
+}
+#endregion
+#region Metodos
+/// <summary>
+/// La funcion retorna true si el ya existe un provoeedor con el nombre ingresado
+/// </summary>
+/// <param name="nombre"></param>
+/// <returns></returns>
+private bool ExisteProveedor(string nombre)
+{
+bool resultado = false;
+int i = 0;
+while (resultado == false && i < proveedores.Count)
+{
+if (proveedores[i].Nombre == nombre)
+{
+resultado = true;
+}
+i++;
+}
+return resultado;
+}
+/// <summary>
+/// La funcion valida que no haya dos huespedes con mismo tipo y numero de documento
+/// </summary>
+/// <param name="huesped"></param>
+/// <exception cref="Exception"></exception>
+private void ExisteHuesped (Huesped huesped)
+{
+TipoDoc tipoDoc = huesped.ObtenerTipoDoc();
+string nroDoc = huesped.ObtenerNroDoc();
+foreach (Huesped item in Huespedes)
+{
+if (item.NroDoc == nroDoc && item.TipoDoc == tipoDoc)
+{
+throw new Exception("Otro huesped ya tiene asignado el mismo tipo y numero de documento que el ingresado");
+}
+}
+}
+/// <summary>
+/// Genero el listado de atributos de actividades
+/// </summary>
+/// <returns></returns>
+public List<string> ObtenerDatosActividades()
+{
+List<string> datosActividades = new List<string>();
+foreach (Actividad actividad in actividades)
+{
+datosActividades.Add(actividad.ToString());
+}
+return datosActividades;
+}
+/// <summary>
+/// Genero listasdo de atributos de proveedores
+/// </summary>
+/// <returns></returns>
+public List<string> ObtenerDatosProveedores()
+{
+List<string> datosProveedores = new List<string> ();
+foreach (Proveedor proveedor in proveedores)
+{
+datosProveedores.Add(proveedor.ToString());
+}
+return datosProveedores;
+}
+/// <summary>
+/// Genera listado de atributos de actividades por costo entre fechas
+/// </summary>
+/// <param name="costo"></param>
+/// <param name="fecha1"></param>
+/// <param name="fecha2"></param>
+/// <returns></returns>
+public List<string> ObtenerActividadesXCostoEntreFechas(double costo, DateTime fecha1, DateTime fecha2)
+{
+List<Actividad> actividadesXCostoEntreFechas = new List<Actividad>();
+if (costo > 0 && costo <= 100)
+{
+foreach (Actividad actividad in actividades)
+{
+if(actividad.Costo > costo && actividad.FechaRealizacion > fecha1 && actividad.FechaRealizacion < fecha2)
+{
+actividadesXCostoEntreFechas.Add(actividad);
+}
+}
+actividadesXCostoEntreFechas.Sort();
+List<string> actividadesFiltradas = new List<string>();
+foreach(Actividad actividad in actividadesXCostoEntreFechas)
+{
+actividadesFiltradas.Add(actividad.ToString());
+}
+return actividadesFiltradas;
+}
+throw new Exception("El valor de promoción debe ser mayor a 0 0 menor o igual a 100");
+}
+/// <summary>
+/// Establece un nuevo descuento para las actividades del proveedor otorgado
+/// </summary>
+/// <param name="nombre"></param>
+/// <param name="descuento"></param>
+public void EstablecerDescuentoProveedor(string nombre, double descuento)
+{
+Proveedor proveedorEncontrado = null;
+if (descuento > 0)
+{
+foreach (Proveedor proveedor in proveedores)
+{
+if (proveedor.Nombre.ToLower() == nombre.ToLower())
+{
+proveedorEncontrado = proveedor;
+proveedor.CambiarDescuento(descuento);
+Console.ForegroundColor = ConsoleColor.Cyan;
+Console.WriteLine("El valor de promoción ha sido reestablecido correctamente");
+Console.ReadLine();
+break;
+}
+}
+if(proveedorEncontrado == null)
+{
+Console.ForegroundColor = ConsoleColor.Cyan;
+Console.WriteLine("El nombre del proveedor ingresado no existe.");
+Console.ReadLine();
+}
+}else
+{
+Console.ForegroundColor = ConsoleColor.Cyan;
+Console.WriteLine("El valor debe ser mayor a 0.");
+Console.ReadLine();
+}
+}
+#endregion
+}
+}
