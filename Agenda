@@ -1,0 +1,56 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+namespace ObligatorioAppConsole
+{
+public class Agenda: IValidable
+{
+#region Atributos
+Huesped huesped;
+Actividad actividad;
+EstadoAgenda estado;
+#endregion
+#region Propiedades
+public Huesped Huesped { get => huesped; }
+public Actividad Actividad { get => actividad; }
+public EstadoAgenda Estado { get => estado; }
+#endregion
+#region Constructor
+public Agenda (Huesped huesped, Actividad actividad, EstadoAgenda estado)
+{
+this.huesped = huesped;
+this.actividad = actividad;
+this.estado = estado;
+}
+#endregion
+#region Metodos
+private double ObtenerCosto()
+{
+if(actividad is Terciarizada nuevaActividadTerciarizada)
+{
+return nuevaActividadTerciarizada.ObtenerCostoActividad();
+}
+if (actividad is DelHostal nuevaActividadDelHostal)
+{
+return nuevaActividadDelHostal.CalcularCostoConDescuento(huesped.NivelFidelizacion);
+}
+throw new Exception("Error");
+}
+public void ValidarDatos()
+{
+decimal edadHuesped = (int)((DateTime.Now - huesped.FechaNac).TotalDays / 365.25);
+if (ObtenerCosto() == 0 && this.Estado == EstadoAgenda.PENDIENTE_PAGO) throw new Exception("Datos inconsistentes. El estado debe ser confirmado si la actividad es sin costo");
+if (actividad.CantMaxPersonas > 0 && edadHuesped >= actividad.EdadMinima)
+{
+if (ObtenerCosto() == 0) this.estado = EstadoAgenda.CONFIRMADA;
+this.estado = EstadoAgenda.PENDIENTE_PAGO;
+}else
+{
+throw new Exception("Error al agendar actividad. No cumple con los requisitos de edad correspondientes O no quedan cupos disponibles para la actividad solicitada. ");
+}
+}
+#endregion
+}
+}
